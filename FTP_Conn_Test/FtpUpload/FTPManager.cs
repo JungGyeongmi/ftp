@@ -72,8 +72,8 @@ namespace FtpUpload
 
                 Console.WriteLine(DateTime.Parse(test[0][7]));
                 string test1 = DateTime.Parse(test[0][7]).ToString();
-                var test3 = TimeZoneInfo.ConvertTimeToUtc(DateTime.Parse(test[0][7]));
-
+                //var test3 = TimeZoneInfo.ConvertTimeToUtc(DateTime.Parse(test[0][7]));
+                var test3 = DateTime.Parse(test[0][7]).ToLocalTime();
                 // DateTime dt = DateTime.ParseExact(test1, "ddd MMM dd yyyy HH:mm:ss 'GMT'K", ci);
                  Console.WriteLine(test3);
                  Console.WriteLine("------------               ------");
