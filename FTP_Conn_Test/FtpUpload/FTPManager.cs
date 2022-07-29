@@ -82,12 +82,18 @@ namespace FtpUpload
                         string filename = t[8];
                         if (filename.Substring(filename.Length - 8) == "20220728")
                         {
-                            Console.WriteLine(DateTime.Parse(t[7]).ToLocalTime());
-                            Console.WriteLine(t[8]);
+                            if(filename.Contains("FNP_recv_proc_etf") && filename.Contains("end"))
+                            {
+                                /// 32.21 의 경우에는 UCT 라 convert 필요함
+                               /// Console.WriteLine(DateTime.Parse(t[7]).ToLocalTime());
+                                Console.WriteLine(DateTime.Parse(t[7]));
+                                Console.WriteLine(t[8]);
+                                Console.WriteLine("------------               ------");
+
+                            }
                         }
                     }
                 }
-                 Console.WriteLine("------------               ------");
 
 
                 /*
