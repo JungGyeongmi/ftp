@@ -65,19 +65,29 @@ namespace FtpUpload
                                         select directoryInfos[10]).Any(name => name.Substring(name.Length - 8) == "20220728");
                 */
                 ///test[n][8]  file name
+                //Console.WriteLine(test[0][5] +" "+test[0][6]);
+                //Console.WriteLine(test[0][7]);
+                //CultureInfo ci = new CultureInfo("ko-KR");
 
-                Console.WriteLine(test[0][5] +" "+test[0][6]);
-                Console.WriteLine(test[0][7]);
-                CultureInfo ci = new CultureInfo("ko-KR");
-
-                Console.WriteLine(DateTime.Parse(test[0][7]));
-                string test1 = DateTime.Parse(test[0][7]).ToString();
+                //Console.WriteLine(DateTime.Parse(test[0][7]));
+                //string test1 = DateTime.Parse(test[0][7]).ToString();
                 //var test3 = TimeZoneInfo.ConvertTimeToUtc(DateTime.Parse(test[0][7]));
-                var test3 = DateTime.Parse(test[0][7]).ToLocalTime();
+               // var test3 = DateTime.Parse(test[0][7]).ToLocalTime();
                 // DateTime dt = DateTime.ParseExact(test1, "ddd MMM dd yyyy HH:mm:ss 'GMT'K", ci);
-                 Console.WriteLine(test3);
+                 //Console.WriteLine(test3);
+                  foreach(string[] t in test)
+                {
+                    if (t.Length == 9)
+                    {
+                        string filename = t[8];
+                        if (filename.Substring(filename.Length - 8) == "20220728")
+                        {
+                            Console.WriteLine(DateTime.Parse(t[7]).ToLocalTime());
+                            Console.WriteLine(t[8]);
+                        }
+                    }
+                }
                  Console.WriteLine("------------               ------");
-                  
 
 
                 /*
@@ -109,10 +119,10 @@ namespace FtpUpload
 
                 ///.Any(name => name == "");
 
-                foreach (string i in directorys)
+/*                foreach (string i in directorys)
                 {
                     Console.WriteLine(i);
-                }
+                }*/
                 Console.WriteLine();
                 Console.WriteLine("END");
                 this.IsConnected = true;
