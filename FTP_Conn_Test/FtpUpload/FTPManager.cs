@@ -33,6 +33,7 @@ namespace FtpUpload
         /// 8 : FXSWAP
         /// </summary>
         private string[] filepathNames = { "cash", "trs_p", "ovrsbond", "ovrssn", "bond", "elw_p", "etfswap", "els_p", "fwd_p" };
+        private Dictionary<string, string> testDict = new Dictionary<string, string>();
 
         public bool ConnectToServer(string ip, string port, string userId, string pwd, string path)
         {
@@ -73,33 +74,35 @@ namespace FtpUpload
                             select directory.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)
                            into directoryinfos
                             select directoryinfos).ToList();
-
+                string nowDt = DateTime.Now.ToString("yyyyMMdd");
                 foreach (string[] t in test)
                 {
-
                     string filename = t[8];
-                    if (filename.Substring(filename.Length - 8) == "20220728")
+                    foreach (string name in filepathNames)
                     {
-                        foreach (string name in filepathNames)
+                        if (filename.Contains("FNP_recv_proc_" + name) && filename.Contains(".end.20220729"))
                         {
-                            if (filename.Contains("FNP_recv_proc_" + name) && filename.Contains("end"))
-                            {
-                                /// 32.21 의 경우에는 UCT 라 convert 필요함
-                                /// Console.WriteLine(DateTime.Parse(t[7]).ToLocalTime());
-                                Console.WriteLine(DateTime.Parse(t[7]));
-                                Console.WriteLine(t[8]);
-                                Console.WriteLine("------------------");
-
-                            }
+                            /// 32.21 의 경우에는 UCT 라 convert 필요함
+                            /// Console.WriteLine(DateTime.Parse(t[7]).ToLocalTime());
+                            /// 수정시간 Console.WriteLine(DateTime.Parse(t[7]));
+                            /// 파일이름 Console.WriteLine(t[8]);
+                            /// Console.WriteLine("------------------");
+                            testDict.Add(t[8], t[7]);
                         }
                     }
                 }
-                Console.WriteLine();
-                Console.WriteLine("END");
+
                 this.IsConnected = true;
+
+                foreach(KeyValuePair<string, string> item in testDict)
+                {
+                    Console.WriteLine("{0} {1}", item.Key, item.Value);
+                }
+
             }
             catch (WebException e)
             {
+                #region 에러
                 /* FtpWebResponse response = (FtpWebResponse)e.Response;
 
                  if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
@@ -115,8 +118,13 @@ namespace FtpUpload
                  {
                      Console.WriteLine("Error: " + e.Message);
                  }*/
+                #endregion
 
                 return false;
+            }
+            finally
+            {
+                Console.WriteLine("END");
             }
 
             return true;
