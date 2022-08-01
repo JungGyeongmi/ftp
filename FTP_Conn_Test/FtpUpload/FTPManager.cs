@@ -32,8 +32,7 @@ namespace FtpUpload
         /// 7 : ELS/DLS
         /// 8 : FXSWAP
         /// </summary>
-        public string[] filepathNames = { "cash", "trs_p", "ovrssn", "ovrsbond", "", "","","","" };
-
+        private string[] filepathNames = { "cash", "trs_p", "ovrsbond", "ovrssn", "bond", "elw_p", "etfswap", "els_p", "fwd_p" };
 
         public bool ConnectToServer(string ip, string port, string userId, string pwd, string path)
         {
@@ -44,8 +43,9 @@ namespace FtpUpload
             this.pwd = pwd;
             this.path = path;
             string url = string.Format(@"FTP://{0}:{1}/{2}", this.ipAddr, this.port, this.path);
-            // /home/woorifsftp/LIVE/SEND/FNP_recv_info_bond.20220701 
-            // fnpprd/batch_gmjung/src/test.pc
+            /// /home/woorifsftp/LIVE/SEND/FNP_recv_info_bond.20220701
+            /// FNP_recv_proc_bond.YYYYMMDD
+            /// fnpprd/batch_gmjung/src/test.pc
             Console.WriteLine("START");
             Console.WriteLine();
             try
@@ -71,33 +71,21 @@ namespace FtpUpload
                 string[] directorys = data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 var test = (from directory in directorys
                             select directory.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)
-                           into directoryinfos select directoryinfos).ToList();
-                /*                        into directoryInfos
-                //                        where directoryInfos[0][0] != 'd'
-                                        select directoryInfos[10]).Any(name => name.Substring(name.Length - 8) == "20220728");
-                */
-                ///test[n][8]  file name
-                //Console.WriteLine(test[0][5] +" "+test[0][6]);
-                //Console.WriteLine(test[0][7]);
-                //CultureInfo ci = new CultureInfo("ko-KR");
+                           into directoryinfos
+                            select directoryinfos).ToList();
 
-                //Console.WriteLine(DateTime.Parse(test[0][7]));
-                //string test1 = DateTime.Parse(test[0][7]).ToString();
-                //var test3 = TimeZoneInfo.ConvertTimeToUtc(DateTime.Parse(test[0][7]));
-               // var test3 = DateTime.Parse(test[0][7]).ToLocalTime();
-                // DateTime dt = DateTime.ParseExact(test1, "ddd MMM dd yyyy HH:mm:ss 'GMT'K", ci);
-                 //Console.WriteLine(test3);
-                  foreach(string[] t in test)
+                foreach (string[] t in test)
                 {
-                    if (t.Length == 9)
+
+                    string filename = t[8];
+                    if (filename.Substring(filename.Length - 8) == "20220728")
                     {
-                        string filename = t[8];
-                        if (filename.Substring(filename.Length - 8) == "20220728")
+                        foreach (string name in filepathNames)
                         {
-                            if(filename.Contains("FNP_recv_proc_fwd_p") && filename.Contains("end"))
+                            if (filename.Contains("FNP_recv_proc_" + name) && filename.Contains("end"))
                             {
                                 /// 32.21 의 경우에는 UCT 라 convert 필요함
-                               /// Console.WriteLine(DateTime.Parse(t[7]).ToLocalTime());
+                                /// Console.WriteLine(DateTime.Parse(t[7]).ToLocalTime());
                                 Console.WriteLine(DateTime.Parse(t[7]));
                                 Console.WriteLine(t[8]);
                                 Console.WriteLine("------------------");
@@ -106,62 +94,27 @@ namespace FtpUpload
                         }
                     }
                 }
-
-
-                /*
-                                List<string> data = null;
-                                while (!directoryReader.EndOfStream)
-                                {
-
-                                    string readLine = directoryReader.ReadLine();
-                                  *//*  var test = (from directory
-                                                 in directorys
-                                     select directory.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)
-                                             into directoryInfos
-                                     //                            where directoryInfos[0][0] != 'd'
-                                     select directoryInfos[8]).ToArray();
-
-                                    data.Add(test[0].ToString());*//*
-
-                                    if (readLine.Substring(readLine.Length - 8) == "20220728")
-                                    {
-                                        Console.WriteLine(directoryReader.ReadLine());
-                                    }
-
-                                }*/
-                /*                Console.WriteLine(data.Count);
-                                foreach (string read in data)
-                                {
-                                    Console.WriteLine(read);
-                                }*/
-
-                ///.Any(name => name == "");
-
-/*                foreach (string i in directorys)
-                {
-                    Console.WriteLine(i);
-                }*/
                 Console.WriteLine();
                 Console.WriteLine("END");
                 this.IsConnected = true;
             }
             catch (WebException e)
             {
-               /* FtpWebResponse response = (FtpWebResponse)e.Response;
+                /* FtpWebResponse response = (FtpWebResponse)e.Response;
 
-                if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
-                {
-                    Console.WriteLine("Does not exist");
-                }
-                else if (e.Status == WebExceptionStatus.ProtocolError)
-                {
-                    Console.WriteLine("Status Code : {0}", ((HttpWebResponse)e.Response).StatusCode);
-                    Console.WriteLine("Status Description : {0}", ((HttpWebResponse)e.Response).StatusDescription);
-                }
-                else
-                {
-                    Console.WriteLine("Error: " + e.Message);
-                }*/
+                 if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                 {
+                     Console.WriteLine("Does not exist");
+                 }
+                 else if (e.Status == WebExceptionStatus.ProtocolError)
+                 {
+                     Console.WriteLine("Status Code : {0}", ((HttpWebResponse)e.Response).StatusCode);
+                     Console.WriteLine("Status Description : {0}", ((HttpWebResponse)e.Response).StatusDescription);
+                 }
+                 else
+                 {
+                     Console.WriteLine("Error: " + e.Message);
+                 }*/
 
                 return false;
             }
@@ -186,7 +139,7 @@ namespace FtpUpload
                 drw-rw-rw- 1 user   group    0 Apr 23  2016 .bashrc
                 ";
             var lastModiDt = response.LastModified;
-           
+
             response.GetResponseStream();
             MatchCollection matches = re.Matches(source);
 
