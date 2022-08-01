@@ -1,10 +1,17 @@
 ﻿using FtpUpload;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 
 class Program
 {
+    private static Dictionary<string, Dictionary<string, string>> CoNameDirectory = new Dictionary<string, Dictionary<string, string>>();
+    /// <summary>
+    ///  우리펀드서비스, 미래에셋펀드서비스, 예탁결제원 ,하나펀드, KB국민, 삼성자산, 신한아이타스, HSBC펀드, 한국펀드
+    ///  4129 4130 4131 4132 4133 4134 4135 4136 4137
+    /// </summary>
+    private static string[] directoryNames = { "woorifsftp", "miraefsftp", "ksdfsftp", "hanafsftp", "kbbankftp", "samsungam", "aitasftp", "hsbcfsftp", "kfsftp" };
     static int Main(string[] args)
     {
         //FTP 접속에 필요한 정보
@@ -13,58 +20,80 @@ class Program
         string pwd = string.Empty;
         string port = string.Empty;
         string path = string.Empty;
+        string pathTest = string.Empty;
 
         if (args.Length < 4)
         {
             Console.WriteLine("IP FTP_ID FTP_PW PORT");
             return 1;
         }
+
         addr = args[0]; //IP 주소
         user = args[1]; //FTP 접속 계정
         pwd = args[2]; //FTP 계정 비밀번호
         port = args[3];  //FTP 접속 Port
         path = args[4]; // 파일 경로
 
+        pathTest = @"/home/{0}/LIVE/SEND";
         FTPManager manager = new FTPManager();
-               
-        bool result = manager.ConnectToServer(addr, port, user, pwd, path);
 
-      /*  string path = string.Empty;
-
-        string fileName = string.Empty;
-
-        string localPath = @"C:\Users\Desktop\"; //바탕화면 경로를 Local Path 기준으로 둠
-
-        path = @"DATA"; //업로드 할 파일 저장할 FTP 경로 지정
-
-        // DirectoryInfo dirInfo = new DirectoryInfo(localPath);
-
-        // FileInfo[] infos = dirInfo.GetFiles();
-
-        if (result == true)
+        foreach (string name in directoryNames)
         {
-            Console.WriteLine("FTP 접속 성공");
-            *//*    foreach (FileInfo info in dirInfo.GetFiles())
+            var _values = manager.ConnectToServer(addr, port, user, pwd, string.Format(pathTest, name));
+            CoNameDirectory.Add(name, _values);
+        }
+
+
+        foreach (var contest in CoNameDirectory)
+        {
+            Console.WriteLine(contest.Key);
+            foreach (KeyValuePair<string, string> item in contest.Value)
+            {
+                if(item.Value != null)
                 {
-                    if (Path.GetExtension(info.Name) == ".txt") //txt 확장자 파일만 FTP 서버에 Upload
-                    {
-                        if (manager.UpLoad(path, info.FullName) == false) //파일 업로드
-                        {
-                            Console.WriteLine("FTP Upload 실패");
-                        }
-                        else
-                        {
-                            Console.WriteLine("FTP Upload 시작");
-                            Console.WriteLine("FTP Upload 완료");
-                        }
-                    }
-                }*//*
+                    Console.WriteLine($"파일명 : {item.Key}  최종수정시간 : {item.Value}");
+                }
+            }
         }
-        else
-        {
-            Console.WriteLine("FTP 접속 실패");
-        }
-*/
+
+        #region test 
+        /*  string path = string.Empty;
+
+          string fileName = string.Empty;
+
+          string localPath = @"C:\Users\Desktop\"; //바탕화면 경로를 Local Path 기준으로 둠
+
+          path = @"DATA"; //업로드 할 파일 저장할 FTP 경로 지정
+
+          // DirectoryInfo dirInfo = new DirectoryInfo(localPath);
+
+          // FileInfo[] infos = dirInfo.GetFiles();
+
+          if (result == true)
+          {
+              Console.WriteLine("FTP 접속 성공");
+              *//*    foreach (FileInfo info in dirInfo.GetFiles())
+                  {
+                      if (Path.GetExtension(info.Name) == ".txt") //txt 확장자 파일만 FTP 서버에 Upload
+                      {
+                          if (manager.UpLoad(path, info.FullName) == false) //파일 업로드
+                          {
+                              Console.WriteLine("FTP Upload 실패");
+                          }
+                          else
+                          {
+                              Console.WriteLine("FTP Upload 시작");
+                              Console.WriteLine("FTP Upload 완료");
+                          }
+                      }
+                  }*//*
+          }
+          else
+          {
+              Console.WriteLine("FTP 접속 실패");
+          }
+  */
+        #endregion
         return 0;
     }
 
@@ -124,17 +153,17 @@ class Program
         string ftpPath = "ftp://ftp.daum.net";
         string user = "anonymous";  // FTP 익명 로그인시. 아니면 로그인/암호 지정.
         string pwd = "";
-       // string outputFile = "index.txt";
+        // string outputFile = "index.txt";
 
         // WebRequest.Create로 Http,Ftp,File Request 객체를 모두 생성할 수 있다.
         FtpWebRequest req = (FtpWebRequest)WebRequest.Create(ftpPath);
         Console.WriteLine("Ftp Web Request");
-        
+
         // FTP 다운로드한다는 것을 표시
         //req.Method = WebRequestMethods.Ftp.DownloadFile;
         // Directory details 
-        req.Method = "LIST"; 
-            //WebRequestMethods.Ftp.ListDirectoryDetails;
+        req.Method = "LIST";
+        //WebRequestMethods.Ftp.ListDirectoryDetails;
 
         // 익명 로그인이 아닌 경우 로그인/암호를 제공해야
         req.Credentials = new NetworkCredential(user, pwd);

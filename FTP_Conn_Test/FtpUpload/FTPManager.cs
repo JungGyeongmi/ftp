@@ -33,10 +33,14 @@ namespace FtpUpload
         /// 8 : FXSWAP
         /// </summary>
         private string[] filepathNames = { "cash", "trs_p", "ovrsbond", "ovrssn", "bond", "elw_p", "etfswap", "els_p", "fwd_p" };
-        private Dictionary<string, string> testDict = new Dictionary<string, string>();
 
-        public bool ConnectToServer(string ip, string port, string userId, string pwd, string path)
+        private Dictionary<string, string> Codata = null;
+        
+        private string connectedCoName = string.Empty;
+
+        public Dictionary<string, string> ConnectToServer(string ip, string port, string userId, string pwd, string path)
         {
+            Codata = new Dictionary<string, string>();
             this.IsConnected = false;
             this.ipAddr = ip;
             this.port = port;
@@ -47,8 +51,8 @@ namespace FtpUpload
             /// /home/woorifsftp/LIVE/SEND/FNP_recv_info_bond.20220701
             /// FNP_recv_proc_bond.YYYYMMDD
             /// fnpprd/batch_gmjung/src/test.pc
-            Console.WriteLine("START");
-            Console.WriteLine();
+            /*Console.WriteLine($"{path} START");
+            Console.WriteLine();*/ 
             try
             {
                 FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(url);
@@ -58,7 +62,7 @@ namespace FtpUpload
                 /// 메서드
                 ftpRequest.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
                 string data = String.Empty;
-                Console.WriteLine($"List Directory Connect And Read..");
+                ///itemConsole.WriteLine($"List Directory Connect And Read..");
 
                 FtpWebResponse response = ftpRequest.GetResponse() as FtpWebResponse;
                 StreamReader directoryReader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.ASCII);
@@ -87,17 +91,25 @@ namespace FtpUpload
                             /// 수정시간 Console.WriteLine(DateTime.Parse(t[7]));
                             /// 파일이름 Console.WriteLine(t[8]);
                             /// Console.WriteLine("------------------");
-                            testDict.Add(t[8], t[7]);
+                            Codata.Add(t[8], t[7]);
                         }
                     }
                 }
 
+/*                foreach(var item in Codata) 
+                {
+                    Console.WriteLine($"{item.Key} /  {item.Value}");
+                }
+*/
+
+                if(Codata.Count == 0)
+                {
+                    Codata.Add(path, "Empty");
+                }
+               /// Console.WriteLine("END");
                 this.IsConnected = true;
 
-                foreach(KeyValuePair<string, string> item in testDict)
-                {
-                    Console.WriteLine("{0} {1}", item.Key, item.Value);
-                }
+                return Codata;
 
             }
             catch (WebException e)
@@ -120,14 +132,8 @@ namespace FtpUpload
                  }*/
                 #endregion
 
-                return false;
             }
-            finally
-            {
-                Console.WriteLine("END");
-            }
-
-            return true;
+            return null;
         }
 
         public void regexCheck(FtpWebResponse response)
