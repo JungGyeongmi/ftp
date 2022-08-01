@@ -21,6 +21,18 @@ namespace FtpUpload
         private string userId = string.Empty;
         private string pwd = string.Empty;
         private string path = string.Empty;
+        /// <summary>
+        /// 0 : CDCP
+        /// 1 : TRS
+        /// 2 : 해외 CLEAN
+        /// 3 : 해외 DIRTY
+        /// 4 : 원화/CB
+        /// 5 : WAR
+        /// 6 : ETF
+        /// 7 : ELS/DLS
+        /// 8 : FXSWAP
+        /// </summary>
+        public string[] filepathNames = { "cash", "trs_p", "ovrssn", "ovrsbond", "", "","","","" };
 
 
         public bool ConnectToServer(string ip, string port, string userId, string pwd, string path)
@@ -82,13 +94,13 @@ namespace FtpUpload
                         string filename = t[8];
                         if (filename.Substring(filename.Length - 8) == "20220728")
                         {
-                            if(filename.Contains("FNP_recv_proc_etf") && filename.Contains("end"))
+                            if(filename.Contains("FNP_recv_proc_fwd_p") && filename.Contains("end"))
                             {
                                 /// 32.21 의 경우에는 UCT 라 convert 필요함
                                /// Console.WriteLine(DateTime.Parse(t[7]).ToLocalTime());
                                 Console.WriteLine(DateTime.Parse(t[7]));
                                 Console.WriteLine(t[8]);
-                                Console.WriteLine("------------               ------");
+                                Console.WriteLine("------------------");
 
                             }
                         }
