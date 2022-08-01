@@ -72,7 +72,7 @@ namespace FtpUpload
                     StreamReader streamReader = new StreamReader(response.GetResponseStream(), Encoding.Default);
                     data = streamReader.ReadToEnd();
                 }
-
+                Console.WriteLine(path);
                 string[] directorys = data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 var test = (from directory in directorys
                             select directory.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)

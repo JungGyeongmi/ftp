@@ -6,6 +6,9 @@ using System.Net;
 
 class Program
 {
+    // SELECT LOCAL_DIR FROM UPRDDB.FPC_CUST_FTP_LIST WHERE CUST_CD ='4133' ;IN('4134','4135','4136','4137'); 고객사 => CUST_CD
+    // SELECT FILE_NM, SUB_DIR FROM UPRDDB.FPC_CUST_FTP_FILELIST WHERE CUST_CD ='4129'; 고객사 파일 => CUST_CD / SEQ / USE_YN
+
     private static Dictionary<string, Dictionary<string, string>> CoNameDirectory = new Dictionary<string, Dictionary<string, string>>();
     /// <summary>
     ///  우리펀드서비스, 미래에셋펀드서비스, 예탁결제원 ,하나펀드, KB국민, 삼성자산, 신한아이타스, HSBC펀드, 한국펀드
@@ -28,21 +31,27 @@ class Program
             return 1;
         }
 
-        addr = args[0]; //IP 주소
+        /*addr = args[0]; //IP 주소
         user = args[1]; //FTP 접속 계정
         pwd = args[2]; //FTP 계정 비밀번호
         port = args[3];  //FTP 접속 Port
+        */
         path = args[4]; // 파일 경로
+                addr = "192.168.40.21";
+   port = "21";
+    user = "fnpftp";
+    pwd = "Ftp201108!!";
+    //path = "/home/hanafsftp/LIVE/SEND";
 
-        pathTest = @"/home/{0}/LIVE/SEND";
+
+    pathTest = @"/home/{0}/LIVE/SEND";
         FTPManager manager = new FTPManager();
 
         foreach (string name in directoryNames)
         {
-            var _values = manager.ConnectToServer(addr, port, user, pwd, string.Format(pathTest, name));
+            var _values = manager.ConnectToServer(addr, port, user, pwd, "/home/woorifsftp/LIVE/SEND");
             CoNameDirectory.Add(name, _values);
         }
-
 
         foreach (var contest in CoNameDirectory)
         {
