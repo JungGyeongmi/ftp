@@ -59,7 +59,7 @@ namespace FtpUpload
                 ftpRequest.Credentials = new NetworkCredential(userId, pwd);
                 ftpRequest.KeepAlive = false;
                 ftpRequest.UsePassive = false;
-                /// 메서드 test
+                /// 메서드
                 ftpRequest.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
                 string data = String.Empty;
                 ///itemConsole.WriteLine($"List Directory Connect And Read..");

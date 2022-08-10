@@ -25,18 +25,18 @@ class Program
         string path = string.Empty;
         string pathTest = string.Empty;
 
-/*        if (args.Length < 4)
+        if (args.Length < 4)
         {
             Console.WriteLine("IP FTP_ID FTP_PW PORT");
             return 1;
-        }*/
+        }
 
         /*addr = args[0]; //IP 주소
         user = args[1]; //FTP 접속 계정
         pwd = args[2]; //FTP 계정 비밀번호
         port = args[3];  //FTP 접속 Port
-        path = args[0]; // 파일 경로
         */
+        path = args[4]; // 파일 경로
                 addr = "192.168.40.21";
    port = "21";
     user = "fnpftp";
